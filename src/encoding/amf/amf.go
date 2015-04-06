@@ -29,7 +29,7 @@ const (
     amf0Reference = amf0(0x07) // done
     amf0Array     = amf0(0x08) // done
     amf0ObjectEnd = amf0(0x09) //done
-    amf0StrictArray = amf0(0x0a)
+    amf0StrictArr = amf0(0x0a)
     amf0Date      = amf0(0x0b) // done
     amf0StringExt = amf0(0x0c) // done
     amf0Xml       = amf0(0x0f)
@@ -74,7 +74,7 @@ func EncodeAMF0 (v interface{}) []byte {
         case Amf0Date:
             msg = encodeDate(v.(Amf0Date))
         case []int, []bool, []float64, []string:
-            msg = encodeStrictArray(v.(interface{}))
+            msg = encodeStrictArr(v)
     }
     return msg
 }
@@ -194,14 +194,27 @@ func encodeObjectEnd() []byte {
     return msg
 }
 
-func encodeStrictArray (v interface{}) []byte {
+func encodeStrictArr (v interface{}) []byte {
     value := reflect.ValueOf(v)
-    if value.Len() < 1{
-        return []byte{byte(amf0StrictArray)}
+    summary_length := 0
+    switch value.Interface().(type) {
+      case []string: 
+        for i := 0; i < value.Len(); i++ {
+          summary_length += value.Index(i).Len() + 3
+        }
+      case []int, []float64: summary_length = value.Len() * 9
+      case []bool: summary_length = value.Len() * 2
+      case []Amf0Date: summary_length = value.Len() * 11
+      case []Amf0Reference: summary_length = value.Len() * 3
+
     }
-    msg := make ([]byte, 1 + 8 + value.Len()) // 1 header + 8 array count
-    msg[0] = byte(amf0StrictArray)
-    binary.BigEndian.PutUint32(msg[1:], uint32(value.Len()))
+    msg := make ([]byte, 1 + 8 + summary_length) // 1 header + 8 array count
+    msg[0] = byte(amf0StrictArr)
+    binary.BigEndian.PutUint32(msg[1:], uint32(summary_length))
+    position := 9
+    for i := 0; i < value.Len(); i++ {
+        position += copy(msg[position:], EncodeAMF0(value.Index(i).Interface()))
+    }
     return msg
 }
 
@@ -211,3 +224,4 @@ func encodeDate (v Amf0Date) []byte {
     binary.BigEndian.PutUint64(msg[1:], uint64(math.Float64bits(float64(v))))
     return msg
 }
+
