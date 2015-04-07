@@ -28,6 +28,4 @@ func main(){
     fmt.Print(hex.Dump(amf.EncodeAMF0([]string{"one", "two", "three"})))
     fmt.Print(hex.Dump(amf.EncodeAMF0([]int{1, 2, 1})))
     fmt.Print(hex.Dump(amf.EncodeAMF0([]bool{true, false, true})))
-
 }
-
