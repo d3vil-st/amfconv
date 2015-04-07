@@ -73,8 +73,8 @@ func EncodeAMF0 (v interface{}) []byte {
             msg = encodeECMAArray(v.(Amf0ECMAArray))
         case Amf0Date:
             msg = encodeDate(v.(Amf0Date))
-        case []int, []bool, []float64, []string:
-            msg = encodeStrictArr(v)
+        case []interface{}:
+            msg = encodeStrictArr(v.([]interface{}))
     }
     return msg
 }
@@ -114,47 +114,30 @@ func encodeString(v string) []byte {
 }
 
 func encodeObject(v map[string]interface{}) []byte {
-    summary_length := 0
+    buf := new(bytes.Buffer)
     for key, value := range v {
-        summary_length += len(key) + 3
-        switch value.(type){
-            case int, float64: summary_length += 9
-            case string:
-                if len(value.(string)) < 0xffff {
-                    summary_length += len(value.(string)) + 3
-                } else {
-                    summary_length += len(value.(string)) + 5
-                }
-            case bool: summary_length += 2
-            case Amf0Date: summary_length += 11
-            case Amf0Reference: summary_length += 3
-            case nil: summary_length++
-        }
-    }
-    msg := make([]byte, 1 + summary_length + 3) // 1 header + length + 3 end marker
-    msg[0] = byte(amf0Object)
-
-    position := 1
-    for key, value := range v {
-        position += copy(msg[position:], encodeString(key))
+        buf.Write(EncodeAMF0(key))
         switch value.(type){
             case int:
-                position += copy(msg[position:], encodeNumber(float64(value.(int))))
+                buf.Write(EncodeAMF0(value.(int)))
             case float64:
-                position += copy(msg[position:], encodeNumber(value.(float64)))
+                buf.Write(EncodeAMF0(value.(float64)))
             case string:
-                position += copy(msg[position:], encodeString(value.(string)))
+                buf.Write(EncodeAMF0(value.(string)))
             case bool:
-                position += copy(msg[position:], encodeBoolean(value.(bool)))
+                buf.Write(EncodeAMF0(value.(bool)))
             case Amf0Date:
-                position += copy(msg[position:], encodeDate(value.(Amf0Date)))
+                buf.Write(EncodeAMF0(value.(Amf0Date)))
             case Amf0Reference:
-                position += copy(msg[position:], encodeReference(value.(Amf0Reference)))
+                buf.Write(EncodeAMF0(value.(Amf0Reference)))
             case nil:
-                position += copy(msg[position:], encodeNull())
+            buf.Write(EncodeAMF0(nil))
         }
     }
-    copy(msg[position:], encodeObjectEnd())
+    buf.Write(encodeObjectEnd())
+    msg := make([]byte, 1 + buf.Len()) // 1 header + length
+    msg[0] = byte(amf0Object)
+    copy(msg[1:], buf.Bytes())
     return msg
 }
 
@@ -194,39 +177,14 @@ func encodeObjectEnd() []byte {
     return msg
 }
 
-func encodeStrictArr (v interface{}) []byte {
-    summary_length := 0
+func encodeStrictArr (v []interface{}) []byte {
     buf := new(bytes.Buffer)
-    switch c := v.(type) {
-        case []string:
-            for _, k := range c {
-                summary_length += len(k) + 3
-                buf.Write(EncodeAMF0(k))
-            }
-        case []int: summary_length = len(c) * 9
-            for _, k := range c {
-                buf.Write(EncodeAMF0(k))
-            }
-        case []float64: summary_length = len(c) * 9
-            for _, k := range c {
-                buf.Write(EncodeAMF0(k))
-            }
-        case []bool: summary_length = len(c) * 2
-            for _, k := range c {
-                buf.Write(EncodeAMF0(k))
-            }
-        case []Amf0Date: summary_length = len(c) * 11
-            for _, k := range c {
-                buf.Write(EncodeAMF0(k))
-            }
-        case []Amf0Reference: summary_length = len(c) * 3
-            for _, k := range c {
-                buf.Write(EncodeAMF0(k))
-            }
+    for _, k := range v {
+      buf.Write(EncodeAMF0(k))
     }
-    msg := make ([]byte, 1 + 8 + summary_length) // 1 header + 8 array count
+    msg := make ([]byte, 1 + 8 + buf.Len()) // 1 header + 8 array count + length
     msg[0] = byte(amf0StrictArr)
-    binary.BigEndian.PutUint32(msg[1:], uint32(summary_length))
+    binary.BigEndian.PutUint32(msg[1:], uint32(buf.Len()))
     copy(msg[9:], buf.Bytes())
     return msg
 }
