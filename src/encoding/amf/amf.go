@@ -55,26 +55,16 @@ const (
 func EncodeAMF0 (v interface{}) []byte {
     var msg []byte
     switch v.(type) {
-        case float64:
-            msg = encodeNumber(v.(float64))
-        case int:
-            msg = encodeNumber(float64(v.(int)))
-        case bool:
-            msg = encodeBoolean(v.(bool))
-        case string:
-            msg = encodeString(v.(string))
-        case nil:
-            msg = encodeNull()
-        case Amf0Reference:
-            msg = encodeReference(v.(Amf0Reference))
-        case map[string]interface{}:
-            msg = encodeObject(v.(map[string]interface{}))
-        case Amf0ECMAArray:
-            msg = encodeECMAArray(v.(Amf0ECMAArray))
-        case Amf0Date:
-            msg = encodeDate(v.(Amf0Date))
-        case []interface{}:
-            msg = encodeStrictArr(v.([]interface{}))
+        case float64: msg = encodeNumber(v.(float64))
+        case int: msg = encodeNumber(float64(v.(int)))
+        case bool: msg = encodeBoolean(v.(bool))
+        case string: msg = encodeString(v.(string))
+        case nil: msg = encodeNull()
+        case Amf0Reference: msg = encodeReference(v.(Amf0Reference))
+        case map[string]interface{}: msg = encodeObject(v.(map[string]interface{}))
+        case Amf0ECMAArray: msg = encodeECMAArray(v.(Amf0ECMAArray))
+        case Amf0Date: msg = encodeDate(v.(Amf0Date))
+        case []interface{}: msg = encodeStrictArr(v.([]interface{}))
     }
     return msg
 }
@@ -118,20 +108,13 @@ func encodeObject(v map[string]interface{}) []byte {
     for key, value := range v {
         buf.Write(EncodeAMF0(key))
         switch value.(type){
-            case int:
-                buf.Write(EncodeAMF0(value.(int)))
-            case float64:
-                buf.Write(EncodeAMF0(value.(float64)))
-            case string:
-                buf.Write(EncodeAMF0(value.(string)))
-            case bool:
-                buf.Write(EncodeAMF0(value.(bool)))
-            case Amf0Date:
-                buf.Write(EncodeAMF0(value.(Amf0Date)))
-            case Amf0Reference:
-                buf.Write(EncodeAMF0(value.(Amf0Reference)))
-            case nil:
-            buf.Write(EncodeAMF0(nil))
+            case int: buf.Write(EncodeAMF0(value.(int)))
+            case float64: buf.Write(EncodeAMF0(value.(float64)))
+            case string: buf.Write(EncodeAMF0(value.(string)))
+            case bool: buf.Write(EncodeAMF0(value.(bool)))
+            case Amf0Date: buf.Write(EncodeAMF0(value.(Amf0Date)))
+            case Amf0Reference: buf.Write(EncodeAMF0(value.(Amf0Reference)))
+            case nil: buf.Write(EncodeAMF0(nil))
         }
     }
     buf.Write(encodeObjectEnd())
