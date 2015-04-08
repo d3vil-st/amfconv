@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"math"
+	"sort"
 )
 
 type AMFVersion uint8
@@ -117,22 +118,27 @@ func encodeString(v string) []byte {
 }
 
 func encodeObject(v map[string]interface{}) []byte {
+	var keys []string
+	for k := range v {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
 	buf := new(bytes.Buffer)
-	for key, value := range v {
-		buf.Write(EncodeAMF0(key))
-		switch value.(type) {
+	for key := range keys {
+		buf.Write(EncodeAMF0(keys[key]))
+		switch v[keys[key]].(type) {
 		case int:
-			buf.Write(EncodeAMF0(value.(int)))
+			buf.Write(EncodeAMF0(v[keys[key]].(int)))
 		case float64:
-			buf.Write(EncodeAMF0(value.(float64)))
+			buf.Write(EncodeAMF0(v[keys[key]].(float64)))
 		case string:
-			buf.Write(EncodeAMF0(value.(string)))
+			buf.Write(EncodeAMF0(v[keys[key]].(string)))
 		case bool:
-			buf.Write(EncodeAMF0(value.(bool)))
+			buf.Write(EncodeAMF0(v[keys[key]].(bool)))
 		case Amf0Date:
-			buf.Write(EncodeAMF0(value.(Amf0Date)))
+			buf.Write(EncodeAMF0(v[keys[key]].(Amf0Date)))
 		case Amf0Reference:
-			buf.Write(EncodeAMF0(value.(Amf0Reference)))
+			buf.Write(EncodeAMF0(v[keys[key]].(Amf0Reference)))
 		case nil:
 			buf.Write(EncodeAMF0(nil))
 		}
