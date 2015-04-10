@@ -115,3 +115,57 @@ func TestDecodeAMF0(t *testing.T) {
 		}
 	}
 }
+
+func benchmarkEncodeAMF0(i interface{}, b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		EncodeAMF0(i)
+	}
+}
+
+func benchmarkDecodeAMF0(i []byte, b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		DecodeAMF0(i)
+	}
+}
+
+func BenchmarkEncodeAMF0Int(b *testing.B)         { benchmarkEncodeAMF0(1, b) }
+func BenchmarkEncodeAMF0String(b *testing.B)      { benchmarkEncodeAMF0("asdfdsfdsgrh", b) }
+func BenchmarkEncodeAMF0EmptyString(b *testing.B) { benchmarkEncodeAMF0("", b) }
+func BenchmarkEncodeAMF0Bool(b *testing.B)        { benchmarkEncodeAMF0(true, b) }
+func BenchmarkEncodeAMF0Float(b *testing.B)       { benchmarkEncodeAMF0(1.2, b) }
+func BenchmarkEncodeAMF0Xml(b *testing.B)         { benchmarkEncodeAMF0(Amf0Xml("one two three"), b) }
+func BenchmarkEncodeAMF0ArrBool(b *testing.B) {
+	benchmarkEncodeAMF0([]interface{}{true, false, true}, b)
+}
+
+func BenchmarkEncodeAMF0ArrString(b *testing.B) {
+	benchmarkEncodeAMF0([]interface{}{"one", "two", "three"}, b)
+}
+
+func BenchmarkDecodeAMF0Number(b *testing.B) {
+	benchmarkDecodeAMF0([]byte{0x00, 0x3f, 0xf0, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00}, b)
+}
+
+func BenchmarkDecodeAMF0String(b *testing.B) {
+	benchmarkDecodeAMF0([]byte{0x02, 0x00, 0x03, 0x66, 0x6f, 0x6f}, b)
+}
+
+func BenchmarkDecodeAMF0EmptyString(b *testing.B) { benchmarkDecodeAMF0([]byte{0x02, 0x00, 0x00}, b) }
+func BenchmarkDecodeAMF0Bool(b *testing.B)        { benchmarkDecodeAMF0([]byte{0x01, 0x01}, b) }
+func BenchmarkDecodeAMF0Xml(b *testing.B) {
+	benchmarkDecodeAMF0([]byte{0x0f, 0x00, 0x00, 0x00, 0x0d, 0x6f, 0x6e,
+		0x65, 0x20, 0x74, 0x77, 0x6f, 0x20, 0x74,
+		0x68, 0x72, 0x65, 0x65}, b)
+}
+
+func BenchmarkDecodeAMF0MapBool(b *testing.B) {
+	benchmarkDecodeAMF0([]byte{0x0a, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00,
+		0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x01}, b)
+}
+
+func BenchmarkDecodeAMF0MapString(b *testing.B) {
+	benchmarkDecodeAMF0([]byte{0x0a, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
+		0x00, 0x02, 0x00, 0x03, 0x6f, 0x6e, 0x65, 0x02, 0x00, 0x03, 0x74, 0x77, 0x6f, 0x02, 0x00,
+		0x05, 0x74, 0x68, 0x72, 0x65, 0x65}, b)
+}
