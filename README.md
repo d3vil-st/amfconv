@@ -1,5 +1,6 @@
 # AMF converter for golang
 Supported formats:
+
 AMF0
  - [x] amf0Number
  - [x] amf0Boolean
@@ -15,6 +16,7 @@ AMF0
  - [x] amf0StringExt
  - [x] amf0Xml
  - [ ] amf0Instance
+
 AMF3
  - [ ]	amf3Undefined
  - [ ]	amf3Null
