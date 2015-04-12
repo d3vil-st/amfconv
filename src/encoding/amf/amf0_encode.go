@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"math"
+	"time"
 )
 
 func EncodeAMF0(v interface{}) []byte {
@@ -24,8 +25,8 @@ func EncodeAMF0(v interface{}) []byte {
 		return encodeObject(v.(map[string]interface{}))
 	case Amf0ECMAArray:
 		return encodeECMAArray(v.(Amf0ECMAArray))
-	case Amf0Date:
-		return encodeDate(v.(Amf0Date))
+	case time.Time:
+		return encodeDate(v.(time.Time))
 	case []interface{}:
 		return encodeStrictArr(v.([]interface{}))
 	case Amf0Xml:
@@ -81,8 +82,8 @@ func encodeObject(v map[string]interface{}) []byte {
 			buf.Write(EncodeAMF0(value.(string)))
 		case bool:
 			buf.Write(EncodeAMF0(value.(bool)))
-		case Amf0Date:
-			buf.Write(EncodeAMF0(value.(Amf0Date)))
+		case time.Time:
+			buf.Write(EncodeAMF0(value.(time.Time)))
 		case Amf0Reference:
 			buf.Write(EncodeAMF0(value.(Amf0Reference)))
 		case nil:
@@ -127,10 +128,10 @@ func encodeObjectEnd() []byte {
 	return []byte{0x00, 0x00, byte(amf0ObjectEnd)}
 }
 
-func encodeDate(v Amf0Date) []byte {
+func encodeDate(v time.Time) []byte {
 	msg := make([]byte, 1+8+2) // 1 header + 8 float64 + 2 timezone
 	msg[0], msg[9], msg[10] = byte(amf0Date), 0x0, 0x0
-	binary.BigEndian.PutUint64(msg[1:], uint64(math.Float64bits(float64(v))))
+	binary.BigEndian.PutUint64(msg[1:], uint64(v.UnixNano() / 1000000))
 	return msg
 }
 

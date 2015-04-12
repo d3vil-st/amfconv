@@ -9,7 +9,6 @@ const (
 
 type amf0 byte
 type Amf0Reference uint16
-type Amf0Date float64
 type Amf0ECMAArray map[string]interface{}
 type Amf0Xml string
 type amf3 byte

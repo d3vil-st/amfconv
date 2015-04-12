@@ -4,6 +4,7 @@ import (
 	"./src/encoding/amf"
 	"encoding/hex"
 	"fmt"
+	"time"
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 	fmt.Print(hex.Dump(amf.EncodeAMF0(amf.Amf0Reference(5))))
 	fmt.Print(hex.Dump(amf.EncodeAMF0(assoc)))
 	fmt.Print(hex.Dump(amf.EncodeAMF0(amf.Amf0ECMAArray(assoc))))
-	fmt.Print(hex.Dump(amf.EncodeAMF0(amf.Amf0Date(353464561))))
+	fmt.Print(hex.Dump(amf.EncodeAMF0(time.Now())))
 	fmt.Print(hex.Dump(amf.EncodeAMF0([]interface{}{"one", "two", "three"})))
 	fmt.Print(hex.Dump(amf.EncodeAMF0([]interface{}{1, 2, 1})))
 	fmt.Print(hex.Dump(amf.EncodeAMF0([]interface{}{true, false, true})))
@@ -41,7 +42,7 @@ func main() {
 	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0(amf.Amf0Reference(5))))
 	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0(assoc)))
 	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0(amf.Amf0ECMAArray(assoc))))
-	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0(amf.Amf0Date(353464561))))
+	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0(time.Now())))
 	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0([]interface{}{"one", "two", "three"})))
 	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0([]interface{}{1, 2})))
 	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0([]interface{}{true, false, true})))

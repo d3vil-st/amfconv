@@ -3,6 +3,7 @@ package amf
 import (
 	"encoding/binary"
 	"math"
+	"time"
 )
 
 func DecodeAMF0(v []byte) interface{} {
@@ -86,8 +87,8 @@ func decodeStrictArr(v []byte) interface{} {
 	return arr
 }
 
-func decodeDate(v []byte) Amf0Date {
-	return Amf0Date(math.Float64frombits(binary.BigEndian.Uint64(v[1:9])))
+func decodeDate(v []byte) time.Time {
+	return time.Unix(0, int64(binary.BigEndian.Uint64(v[1:9])*1000000))
 }
 
 func decodeObject(v []byte) map[string]interface{} {
