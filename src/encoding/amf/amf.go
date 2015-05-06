@@ -31,12 +31,12 @@ const (
 )
 
 const (
-	amf3Undefined = amf3(0x00)
-	amf3Null      = amf3(0x01)
-	amf3False     = amf3(0x02)
-	amf3True      = amf3(0x03)
+	amf3Undefined = amf3(0x00) // done
+	amf3Null      = amf3(0x01) // done
+	amf3False     = amf3(0x02) // done
+	amf3True      = amf3(0x03) // done
 	amf3Integer   = amf3(0x04)
-	amf3Double    = amf3(0x05)
+	amf3Double    = amf3(0x05) // done
 	amf3String    = amf3(0x06)
 	amf3XmlDoc    = amf3(0x07)
 	amf3Date      = amf3(0x08)

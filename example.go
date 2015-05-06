@@ -47,4 +47,8 @@ func main() {
 	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0([]interface{}{1, 2})))
 	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0([]interface{}{true, false, true})))
 	fmt.Println(amf.DecodeAMF0(amf.EncodeAMF0(amf.Amf0Xml("one two three"))))
+	fmt.Print(hex.Dump(amf.EncodeAMF3(1.3)))
+	fmt.Print(hex.Dump(amf.EncodeAMF3(true)))
+	fmt.Print(hex.Dump(amf.EncodeAMF3(false)))
+	fmt.Print(hex.Dump(amf.EncodeAMF3(nil)))
 }

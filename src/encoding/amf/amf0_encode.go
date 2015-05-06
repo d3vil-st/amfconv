@@ -131,7 +131,7 @@ func encodeObjectEnd() []byte {
 func encodeDate(v time.Time) []byte {
 	msg := make([]byte, 1+8+2) // 1 header + 8 float64 + 2 timezone
 	msg[0], msg[9], msg[10] = byte(amf0Date), 0x0, 0x0
-	binary.BigEndian.PutUint64(msg[1:], uint64(v.UnixNano() / 1000000))
+	binary.BigEndian.PutUint64(msg[1:], uint64(v.UnixNano()/1000000))
 	return msg
 }
 
