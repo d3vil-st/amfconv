@@ -20,8 +20,6 @@ func EncodeAMF0(v interface{}) []byte {
 		return encodeString(v.(string))
 	case nil:
 		return encodeNull()
-	case Amf0Reference:
-		return encodeReference(v.(Amf0Reference))
 	case map[string]interface{}:
 		return encodeObject(v.(map[string]interface{}))
 	case Amf0ECMAArray:
@@ -30,8 +28,6 @@ func EncodeAMF0(v interface{}) []byte {
 		return encodeDate(v.(time.Time))
 	case []interface{}:
 		return encodeStrictArr(v.([]interface{}))
-	case Amf0Xml:
-		return encodeXml(v.(Amf0Xml))
 	}
 	return nil
 }
@@ -91,8 +87,6 @@ func encodeObject(v map[string]interface{}) []byte {
 			buf.Write(EncodeAMF0(value.(bool)))
 		case time.Time:
 			buf.Write(EncodeAMF0(value.(time.Time)))
-		case Amf0Reference:
-			buf.Write(EncodeAMF0(value.(Amf0Reference)))
 		case nil:
 			buf.Write(EncodeAMF0(nil))
 		}
@@ -106,13 +100,6 @@ func encodeObject(v map[string]interface{}) []byte {
 
 func encodeNull() []byte {
 	return []byte{byte(amf0Null)}
-}
-
-func encodeReference(v Amf0Reference) []byte {
-	msg := make([]byte, 1+2) // 1 header + 2 uint16
-	msg[0] = byte(amf0Reference)
-	binary.BigEndian.PutUint16(msg[1:], uint16(v))
-	return msg
 }
 
 func encodeECMAArray(v Amf0ECMAArray) []byte {
@@ -162,13 +149,5 @@ func encodeStrictArr(v []interface{}) []byte {
 	msg[0] = byte(amf0StrictArr)
 	binary.BigEndian.PutUint32(msg[1:], uint32(len(v)))
 	copy(msg[9:], buf.Bytes())
-	return msg
-}
-
-func encodeXml(v Amf0Xml) []byte {
-	msg := make([]byte, 1+4+len(v)) // 1 header + 4 string length + string
-	msg[0] = byte(amf0Xml)
-	binary.BigEndian.PutUint32(msg[1:], uint32(len(v)))
-	copy(msg[5:], v)
 	return msg
 }

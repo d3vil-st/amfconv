@@ -35,40 +35,36 @@ func EncodeAMF3(v interface{}) []byte {
 
 func encodeDouble3(v float64) []byte {
 	msg := make([]byte, 1+8) // 1 header + 8 float64
-	msg[0] = byte(amf3Double)
+	msg[0] = amf3Double
 	binary.BigEndian.PutUint64(msg[1:], uint64(math.Float64bits(v)))
 	return msg
 }
 
 func encodeBoolean3(v bool) []byte {
 	if v {
-		return []byte{byte(amf3True)}
+		return []byte{amf3True}
 	} else {
-		return []byte{byte(amf3False)}
+		return []byte{amf3False}
 	}
-	return []byte{byte(amf3False)}
+	return []byte{amf3False}
 }
 
 func encodeNull3() []byte {
-	return []byte{byte(amf3Null)}
+	return []byte{amf3Null}
 }
 
 func encodeString3(v string) []byte {
 	var msg []byte
 	if len(v) < 0xffff {
 		msg = make([]byte, 1+2+len(v)) // 1 header + 2 length + length of string
-		msg[0] = byte(amf0String)
+		msg[0] = amf0String
 		binary.BigEndian.PutUint16(msg[1:], uint16(len(v)))
 		copy(msg[3:], v)
 	} else {
 		msg = make([]byte, 1+4+len(v)) // 1 header + 4 length + length of string
-		msg[0] = byte(amf0StringExt)
+		msg[0] = amf0StringExt
 		binary.BigEndian.PutUint32(msg[1:], uint32(len(v)))
 		copy(msg[5:], v)
 	}
 	return msg
 }
-
-/* func encodeUndefined3() []byte {
-    return []byte{amf3Undefined}
-}*/

@@ -18,16 +18,12 @@ func DecodeAMF0(v []byte) interface{} {
 		return decodeObject(v)
 	case byte(amf0Null):
 		return nil
-	case byte(amf0Reference):
-		return decodeReference(v)
 	case byte(amf0Array):
 		return decodeECMAArray(v)
 	case byte(amf0StrictArr):
 		return decodeStrictArr(v)
 	case byte(amf0Date):
 		return decodeDate(v)
-	case byte(amf0Xml):
-		return decodeXml(v)
 	}
 	return nil
 }
@@ -52,16 +48,13 @@ func decodeString(v []byte) string {
 	}
 }
 
-func decodeReference(v []byte) Amf0Reference {
-	return Amf0Reference(binary.BigEndian.Uint16(v[1:]))
-}
-
 func decodeECMAArray(v []byte) Amf0ECMAArray {
 	data := make([]byte, len(v)-4)
 	data[0] = byte(amf0Object)
 	copy(data[1:], v[5:])
 	return Amf0ECMAArray(DecodeAMF0(data).(map[string]interface{}))
 }
+
 func decodeStrictArr(v []byte) interface{} {
 	elem_len := uint(len(v)-9) / uint(binary.BigEndian.Uint32(v[1:9]))
 	var arr []interface{}
@@ -116,9 +109,6 @@ func decodeObject(v []byte) map[string]interface{} {
 		case byte(amf0Null):
 			msg[key.(string)] = nil
 			position += 1
-		case byte(amf0Reference):
-			msg[key.(string)] = DecodeAMF0(v[position : position+3])
-			position += 3
 		case byte(amf0Date):
 			msg[key.(string)] = DecodeAMF0(v[position : position+11])
 			position += 11
@@ -129,8 +119,4 @@ func decodeObject(v []byte) map[string]interface{} {
 		}
 	}
 	return msg
-}
-
-func decodeXml(v []byte) Amf0Xml {
-	return Amf0Xml(v[5:])
 }
