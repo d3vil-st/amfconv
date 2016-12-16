@@ -15,4 +15,11 @@ The Adobe Integrated Runtime and Adobe Flash Player use AMF to communicate betwe
 
 ## AMF3
 
+ - [x] `int`, `uint` / Number
+ - [x] `float64` / Number
+ - [x] `bool` / Boolean
+ - [x] `string` / String
+ - [x] `nil` / Null
+ - [x] `time.Time` / Date
+
 Work in progress
