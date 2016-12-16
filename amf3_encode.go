@@ -17,18 +17,18 @@ func EncodeAMF3(v interface{}) []byte {
 		  return encodeString3(v.(string))*/
 	case nil:
 		return encodeNull3()
-	/*     case Amf0Reference:
-		   return encodeReference3(v.(Amf0Reference))
-		   case map[string]interface{}:
-		   return encodeObject3(v.(map[string]interface{}))
-		   case Amf0ECMAArray:
-		   return encodeECMAArray3(v.(Amf0ECMAArray))
-		   case time.Time:
-		   return encodeDate3(v.(time.Time))
-		   case []interface{}:
-		   return encodeStrictArr3(v.([]interface{}))
-		   case Amf0Xml:
-		   return encodeXml3(v.(Amf0Xml)) */
+		/*     case Amf0Reference:
+		return encodeReference3(v.(Amf0Reference))
+		case map[string]interface{}:
+		return encodeObject3(v.(map[string]interface{}))
+		case Amf0ECMAArray:
+		return encodeECMAArray3(v.(Amf0ECMAArray))
+		case time.Time:
+		return encodeDate3(v.(time.Time))
+		case []interface{}:
+		return encodeStrictArr3(v.([]interface{}))
+		case Amf0Xml:
+		return encodeXml3(v.(Amf0Xml)) */
 	}
 	return nil
 }

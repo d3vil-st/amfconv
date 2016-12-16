@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"math"
+	"sort"
 	"time"
 )
 
@@ -71,7 +72,13 @@ func encodeString(v string) []byte {
 
 func encodeObject(v map[string]interface{}) []byte {
 	buf := new(bytes.Buffer)
-	for key, value := range v {
+	var keys []string
+	for k := range v {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		value := v[key]
 		buf.Write(EncodeAMF0(key))
 		switch value.(type) {
 		case int:
@@ -107,12 +114,6 @@ func encodeReference(v Amf0Reference) []byte {
 	binary.BigEndian.PutUint16(msg[1:], uint16(v))
 	return msg
 }
-
-/*func encodeUndefined() []byte {
-    msg := make([]byte, 1)
-    msg[0] = byte(amf0Undefined)
-    return msg
-}*/
 
 func encodeECMAArray(v Amf0ECMAArray) []byte {
 	msg_body := encodeObject(v)
