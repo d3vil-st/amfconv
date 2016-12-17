@@ -1,9 +1,9 @@
 package main
 
 import (
-	"./src/encoding/amf"
 	"encoding/hex"
 	"fmt"
+	"github.com/speps/amfconv/src/encoding/amf"
 	"time"
 )
 

@@ -1,33 +1,25 @@
-# AMF converter for golang
-Supported formats:
+# AMF encoding/decoding library for Go
 
-AMF0
- - [x] amf0Number
- - [x] amf0Boolean
- - [x] amf0String
- - [x] amf0Object
- - [x] amf0Null
- - [x] amf0Undefined
- - [x] amf0Reference
- - [x] amf0Array
- - [x] amf0ObjectEnd
- - [x] amf0StrictArr
- - [x] amf0Date
- - [x] amf0StringExt
- - [x] amf0Xml
- - [ ] amf0Instance
+The Adobe Integrated Runtime and Adobe Flash Player use AMF to communicate between an application and a remote server. AMF encodes remote procedure calls (RPC) into a compact binary representation that can be transferred over HTTP/HTTPS or the RTMP/RTMPS protocol. Objects and data values are serialized into this binary format, which increases performance, allowing applications to load data up to 10 times faster than with text-based formats such as XML or SOAP.
 
-AMF3
- - [ ]	amf3Undefined
- - [ ]	amf3Null
- - [ ]	amf3False
- - [ ]	amf3True
- - [ ]	amf3Integer
- - [ ]	amf3Double
- - [ ]	amf3String
- - [ ]	amf3XmlDoc
- - [ ]	amf3Date
- - [ ]	amf3Array
- - [ ]	amf3Object
- - [ ]	amf3Xml
- - [ ]	amf3ByteArray
+## AMF0
+
+ - [x] `int` / Number
+ - [x] `float64` / Number
+ - [x] `bool` / Boolean
+ - [x] `string` / String
+ - [x] `map[string]interface{}` / Object
+ - [x] `nil` / Null
+ - [x] `[]interface{}` / Array
+ - [x] `time.Time` / Date
+
+## AMF3
+
+ - [x] `int`, `uint` / Number
+ - [x] `float64` / Number
+ - [x] `bool` / Boolean
+ - [x] `string` / String
+ - [x] `nil` / Null
+ - [x] `time.Time` / Date
+
+Work in progress
